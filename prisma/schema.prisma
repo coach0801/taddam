@@ -1,0 +1,226 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  BUYER
+  SUPPLIER
+  ADMIN
+}
+
+enum PoolStatus {
+  OPEN
+  FILLING
+  FULFILLING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum CommitmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  REFUNDED
+}
+
+enum ShipmentStatus {
+  PENDING
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+}
+
+enum PayoutStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  emailVerified    DateTime?
+  passwordHash     String
+  name             String
+  businessName     String
+  province         String
+  postalCode       String
+  phone            String?
+  role             UserRole  @default(BUYER)
+  preferredLocale  String    @default("en")
+  stripeCustomerId String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  supplier            Supplier?
+  commitments         PoolCommitment[]
+  orders              Order[]
+  sessions            Session[]
+  verificationTokens  VerificationToken[]
+  signedAgreements    SignedAgreement[]
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id         String   @id @default(cuid())
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([identifier, token])
+}
+
+model Supplier {
+  id                     String    @id @default(cuid())
+  userId                 String    @unique
+  companyName            String
+  taxNumber              String
+  stripeConnectId        String?
+  stripeConnectOnboarded Boolean   @default(false)
+  approved               Boolean   @default(false)
+  approvedAt             DateTime?
+  businessType           String    @default("corporation")
+  website                String?
+  description            String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  user     User             @relation(fields: [userId], references: [id])
+  skus     SKU[]
+  pools    Pool[]
+  payouts  SupplierPayout[]
+}
+
+model SKU {
+  id          String   @id @default(cuid())
+  supplierId  String
+  nameEn      String
+  nameFr      String
+  descEn      String?
+  descFr      String?
+  category    String
+  unit        String   @default("unit")
+  soloPrice   Float
+  currency    String   @default("CAD")
+  minOrderQty Int      @default(1)
+  imageUrl    String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  supplier Supplier @relation(fields: [supplierId], references: [id])
+  pools    Pool[]
+}
+
+model Pool {
+  id               String     @id @default(cuid())
+  supplierId       String
+  skuId            String
+  status           PoolStatus @default(OPEN)
+  targetQty        Int
+  committedQty     Int        @default(0)
+  region           String
+  regionFr         String?
+  closesAt         DateTime
+  tiers            Json
+  participantCount Int        @default(0)
+  closedAt         DateTime?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  supplier    Supplier         @relation(fields: [supplierId], references: [id])
+  sku         SKU              @relation(fields: [skuId], references: [id])
+  commitments PoolCommitment[]
+  orders      Order[]
+}
+
+model PoolCommitment {
+  id                    String           @id @default(cuid())
+  poolId                String
+  userId                String
+  qty                   Int
+  unitPrice             Float
+  total                 Float
+  status                CommitmentStatus @default(PENDING)
+  stripePaymentIntentId String?
+  stripeClientSecret    String?
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  pool  Pool  @relation(fields: [poolId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+  order Order?
+}
+
+model Order {
+  id             String         @id @default(cuid())
+  commitmentId   String         @unique
+  poolId         String
+  userId         String
+  qty            Int
+  unitPrice      Float
+  total          Float
+  shipmentStatus ShipmentStatus @default(PENDING)
+  trackingNumber String?
+  invoiceUrl     String?
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  commitment PoolCommitment @relation(fields: [commitmentId], references: [id])
+  pool       Pool           @relation(fields: [poolId], references: [id])
+  user       User           @relation(fields: [userId], references: [id])
+  payout     SupplierPayout?
+}
+
+model SupplierPayout {
+  id               String       @id @default(cuid())
+  orderId          String       @unique
+  supplierId       String
+  amount           Float
+  currency         String       @default("CAD")
+  stripeTransferId String?
+  status           PayoutStatus @default(PENDING)
+  paidAt           DateTime?
+  createdAt        DateTime     @default(now())
+
+  order    Order    @relation(fields: [orderId], references: [id])
+  supplier Supplier @relation(fields: [supplierId], references: [id])
+}
+
+model LegalDocument {
+  id        String   @id @default(cuid())
+  type      String
+  version   String
+  contentEn String   @db.Text
+  contentFr String   @db.Text
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model SignedAgreement {
+  id         String   @id @default(cuid())
+  userId     String
+  documentId String
+  version    String
+  signedAt   DateTime @default(now())
+  ipAddress  String?
+  user       User     @relation(fields: [userId], references: [id])
+}
