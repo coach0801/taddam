@@ -5,6 +5,7 @@ import { type Locale, getTranslation } from '@/lib/i18n'
 import Footer from '@/components/Footer'
 import Modal from '@/components/Modal'
 import { useToast } from '@/components/Toast'
+import UserMenu from '@/components/UserMenu'
 import {
   Shield, AlertTriangle, CheckCircle2, XCircle, Users, Package,
   DollarSign, TrendingUp, Settings, RefreshCw, Clock, Filter,
@@ -32,7 +33,7 @@ function AppNavbar({ locale }: { locale: Locale }) {
           </Link>
           <div className="flex items-center gap-3">
             <span className="badge-blue text-xs">Admin</span>
-            <div className="w-9 h-9 rounded-full bg-brand-700 flex items-center justify-center text-white font-bold text-sm">AD</div>
+            <UserMenu locale={locale} dark={true} fallbackInitials="AD" />
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { type Locale, getTranslation } from '@/lib/i18n'
 import Footer from '@/components/Footer'
+import UserMenu from '@/components/UserMenu'
 import { Plus, Package, ArrowLeft, TrendingDown, Loader2 } from 'lucide-react'
 
 function formatCAD(n: number) {
@@ -14,7 +15,7 @@ function Skeleton({ className }: { className?: string }) {
   return <div className={`animate-pulse bg-slate-200 rounded-lg ${className}`} />
 }
 
-function AppNavbar({ locale, userName }: { locale: Locale; userName?: string }) {
+function AppNavbar({ locale }: { locale: Locale }) {
   const t = getTranslation(locale)
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200/60">
@@ -33,9 +34,7 @@ function AppNavbar({ locale, userName }: { locale: Locale; userName?: string }) 
             <Link href={`/${locale}/pools/create`} className="btn-primary text-sm py-2 px-4">
               <Plus size={15} /> {t.nav.createPool}
             </Link>
-            <div className="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm">
-              {userName?.slice(0, 2).toUpperCase() ?? 'U'}
-            </div>
+            <UserMenu locale={locale} />
           </div>
         </div>
       </div>
@@ -86,7 +85,7 @@ export default function OrdersPage({ params }: { params: { locale: Locale } }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <AppNavbar locale={locale} userName={user?.name} />
+      <AppNavbar locale={locale} />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
         <div className="mb-8">

@@ -5,6 +5,7 @@ import { type Locale, getTranslation } from '@/lib/i18n'
 import Footer from '@/components/Footer'
 import Modal from '@/components/Modal'
 import { useToast } from '@/components/Toast'
+import UserMenu from '@/components/UserMenu'
 import {
   Package, DollarSign, Star, Plus, Edit2, Pause,
   Play, ChevronRight, Truck, Users, Check
@@ -24,7 +25,7 @@ function AppNavbar({ locale }: { locale: Locale }) {
           </Link>
           <div className="flex items-center gap-4">
             <span className="text-sm text-slate-500 hidden sm:block">CanSafe Supply Co. · {locale === 'fr' ? 'Fournisseur' : 'Supplier'}</span>
-            <div className="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm">CS</div>
+            <UserMenu locale={locale} fallbackInitials="CS" />
           </div>
         </div>
       </div>

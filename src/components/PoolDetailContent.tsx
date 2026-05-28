@@ -6,6 +6,7 @@ import { Elements } from '@stripe/react-stripe-js'
 import { type Locale, getTranslation } from '@/lib/i18n'
 import Footer from '@/components/Footer'
 import StripePaymentForm from '@/components/StripePaymentForm'
+import UserMenu from '@/components/UserMenu'
 import {
   ArrowLeft, Users, Clock, Shield, ChevronRight,
   Share2, Copy, Check, MapPin, Calendar, Building2, Star, Plus, Minus, Loader2, AlertCircle
@@ -29,7 +30,7 @@ function AppNavbar({ locale }: { locale: Locale }) {
             <Link href={`/${locale}/pools`} className="text-sm text-slate-600 hover:text-slate-900 font-medium flex items-center gap-1">
               <ArrowLeft size={14} /> {getTranslation(locale).poolDetail.back}
             </Link>
-            <div className="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm">MT</div>
+            <UserMenu locale={locale} />
           </div>
         </div>
       </div>

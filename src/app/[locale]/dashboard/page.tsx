@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { type Locale, getTranslation } from '@/lib/i18n'
 import Footer from '@/components/Footer'
+import UserMenu from '@/components/UserMenu'
 import {
   TrendingDown, Package, Truck, BarChart3, Plus, ArrowRight,
   Clock, Users, ChevronRight, Loader2
@@ -71,9 +72,7 @@ export default function DashboardPage({ params }: { params: { locale: Locale } }
               <Link href={`/${locale}/pools/create`} className="btn-primary text-sm py-2 px-4">
                 <Plus size={15} /> {t.nav.createPool}
               </Link>
-              <div className="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm">
-                {user?.name?.slice(0, 2).toUpperCase() ?? 'U'}
-              </div>
+              <UserMenu locale={locale} />
             </div>
           </div>
         </div>
