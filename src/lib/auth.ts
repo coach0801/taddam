@@ -1,6 +1,5 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from './db'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
@@ -12,11 +11,10 @@ const loginSchema = z.object({
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
-  adapter: PrismaAdapter(prisma) as any,
   session: { strategy: 'jwt' },
   pages: {
     signIn: '/en/auth/login',
-    error: '/en/auth/error',
+    error: '/en/auth/login',
   },
   callbacks: {
     async jwt({ token, user }: { token: any; user: any }) {
@@ -46,21 +44,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials: any) {
-        const parsed = loginSchema.safeParse(credentials)
-        if (!parsed.success) return null
-        const { email, password } = parsed.data
-        const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } })
-        if (!user) return null
-        const valid = await bcrypt.compare(password, user.passwordHash)
-        if (!valid) return null
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          businessName: user.businessName,
-          preferredLocale: user.preferredLocale,
-        } as any
+        try {
+          const parsed = loginSchema.safeParse(credentials)
+          if (!parsed.success) return null
+          const { email, password } = parsed.data
+          const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } })
+          if (!user) return null
+          const valid = await bcrypt.compare(password, user.passwordHash)
+          if (!valid) return null
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            businessName: user.businessName,
+            preferredLocale: user.preferredLocale,
+          } as any
+        } catch (err) {
+          console.error('[AUTH authorize]', err)
+          return null
+        }
       },
     }),
   ],
