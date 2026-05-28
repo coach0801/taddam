@@ -2,7 +2,7 @@
   package = "@netlify/plugin-nextjs"
 
 [build]
-  command = "npx prisma generate && npx prisma db push --accept-data-loss && npx prisma db execute --url \"$DATABASE_URL\" --file prisma/seed.sql && npm run build"
+  command = "npx prisma generate && npx prisma db push --accept-data-loss && npm run build"
   publish = ".next"
 
 [[headers]]
