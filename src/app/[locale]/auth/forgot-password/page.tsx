@@ -2,17 +2,28 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { type Locale, getTranslation } from '@/lib/i18n'
-import { ArrowRight, Shield, Mail, Check } from 'lucide-react'
+import { ArrowRight, Shield, Mail, Check, Loader2 } from 'lucide-react'
 
 export default function ForgotPasswordPage({ params }: { params: { locale: Locale } }) {
   const { locale } = params
   const t = getTranslation(locale)
   const fp = t.auth.forgotPassword
+  const isFr = locale === 'fr'
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoading(true)
+    try {
+      await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, locale }),
+      })
+    } catch {}
+    setLoading(false)
     setSent(true)
   }
 
@@ -34,17 +45,14 @@ export default function ForgotPasswordPage({ params }: { params: { locale: Local
           <div className="w-20 h-20 rounded-3xl bg-white/10 flex items-center justify-center mx-auto mb-8">
             <Mail size={36} className="text-white/80" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-4">{t.auth.forgotPassword.sidebarTitle}</h2>
-          <p className="text-white/70 text-sm leading-relaxed">
-            {t.auth.forgotPassword.sidebarNote}
-          </p>
+          <h2 className="text-2xl font-bold text-white mb-4">{fp.sidebarTitle}</h2>
+          <p className="text-white/70 text-sm leading-relaxed">{fp.sidebarNote}</p>
         </div>
       </div>
 
       {/* Right panel */}
       <div className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md">
-          {/* Mobile logo */}
           <div className="lg:hidden flex justify-center mb-8">
             <Link href={`/${locale}`} className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center">
@@ -61,23 +69,16 @@ export default function ForgotPasswordPage({ params }: { params: { locale: Local
                   <h1 className="text-2xl font-bold text-slate-900 mb-2">{fp.title}</h1>
                   <p className="text-slate-500 text-sm">{fp.sub}</p>
                 </div>
-
                 <form onSubmit={handleSubmit}>
                   <div className="mb-6">
                     <label className="label">{fp.email}</label>
-                    <input
-                      type="email"
-                      className="input"
-                      placeholder="you@yourcompany.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
+                    <input type="email" className="input" placeholder="you@yourcompany.com"
+                      value={email} onChange={e => setEmail(e.target.value)} required />
                   </div>
-
-                  <button type="submit" className="btn-primary w-full text-base py-3.5">
-                    {fp.submit}
-                    <ArrowRight size={18} />
+                  <button type="submit" disabled={loading} className="btn-primary w-full text-base py-3.5">
+                    {loading
+                      ? <><Loader2 size={16} className="animate-spin" /> {isFr ? 'Envoi…' : 'Sending…'}</>
+                      : <>{fp.submit} <ArrowRight size={18} /></>}
                   </button>
                 </form>
               </>
@@ -93,10 +94,7 @@ export default function ForgotPasswordPage({ params }: { params: { locale: Local
             )}
 
             <div className="mt-6 text-center">
-              <Link
-                href={`/${locale}/auth/login`}
-                className="text-sm text-brand-600 font-medium hover:text-brand-700"
-              >
+              <Link href={`/${locale}/auth/login`} className="text-sm text-brand-600 font-medium hover:text-brand-700">
                 {fp.back}
               </Link>
             </div>

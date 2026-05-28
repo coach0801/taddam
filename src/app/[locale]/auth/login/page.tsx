@@ -1,15 +1,35 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { type Locale, getTranslation } from '@/lib/i18n'
-import { Eye, EyeOff, ArrowRight, Shield } from 'lucide-react'
+import { Eye, EyeOff, ArrowRight, Shield, Loader2 } from 'lucide-react'
 
 export default function LoginPage({ params }: { params: { locale: Locale } }) {
   const { locale } = params
   const t = getTranslation(locale)
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const isFr = locale === 'fr'
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+    const result = await signIn('credentials', { email, password, redirect: false })
+    if (result?.error) {
+      setError(isFr ? 'Courriel ou mot de passe incorrect.' : 'Invalid email or password.')
+      setLoading(false)
+    } else {
+      router.push(`/${locale}/dashboard`)
+      router.refresh()
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex">
@@ -26,14 +46,8 @@ export default function LoginPage({ params }: { params: { locale: Locale } }) {
             </div>
             <span className="text-3xl font-black text-white tracking-tight">taddam</span>
           </Link>
-
-          <h2 className="text-3xl font-bold text-white mb-4 leading-tight">
-            {t.auth.login.sidebarTitle}
-          </h2>
-          <p className="text-white/70 mb-10 leading-relaxed">
-            {t.auth.login.sidebarSub}
-          </p>
-
+          <h2 className="text-3xl font-bold text-white mb-4 leading-tight">{t.auth.login.sidebarTitle}</h2>
+          <p className="text-white/70 mb-10 leading-relaxed">{t.auth.login.sidebarSub}</p>
           <div className="grid grid-cols-2 gap-4">
             {[
               { value: '2,400+', label: t.auth.login.stat1Label },
@@ -69,18 +83,16 @@ export default function LoginPage({ params }: { params: { locale: Locale } }) {
               <p className="text-slate-500 text-sm">{t.auth.login.sub}</p>
             </div>
 
-            <form onSubmit={(e) => { e.preventDefault(); window.location.href = `/${locale}/dashboard` }}>
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-700">{error}</div>
+            )}
+
+            <form onSubmit={handleSubmit}>
               <div className="space-y-4 mb-6">
                 <div>
                   <label className="label">{t.auth.login.email}</label>
-                  <input
-                    type="email"
-                    className="input"
-                    placeholder="you@yourcompany.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
+                  <input type="email" className="input" placeholder="you@yourcompany.com"
+                    value={email} onChange={e => setEmail(e.target.value)} required />
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
@@ -90,28 +102,20 @@ export default function LoginPage({ params }: { params: { locale: Locale } }) {
                     </Link>
                   </div>
                   <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      className="input pr-12"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                    >
+                    <input type={showPassword ? 'text' : 'password'} className="input pr-12"
+                      placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
               </div>
 
-              <button type="submit" className="btn-primary w-full text-base py-3.5">
-                {t.auth.login.submit}
-                <ArrowRight size={18} />
+              <button type="submit" disabled={loading} className="btn-primary w-full text-base py-3.5">
+                {loading
+                  ? <><Loader2 size={16} className="animate-spin" /> {isFr ? 'Connexion…' : 'Signing in…'}</>
+                  : <>{t.auth.login.submit} <ArrowRight size={18} /></>}
               </button>
             </form>
 
@@ -131,9 +135,7 @@ export default function LoginPage({ params }: { params: { locale: Locale } }) {
           </div>
 
           <div className="mt-6 text-center">
-            <Link href={`/${locale}`} className="text-sm text-slate-500 hover:text-slate-700">
-              {t.auth.login.backHome}
-            </Link>
+            <Link href={`/${locale}`} className="text-sm text-slate-500 hover:text-slate-700">{t.auth.login.backHome}</Link>
           </div>
         </div>
       </div>

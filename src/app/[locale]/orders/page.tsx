@@ -1,11 +1,20 @@
 'use client'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 import { type Locale, getTranslation } from '@/lib/i18n'
 import Footer from '@/components/Footer'
-import { Plus, Package, ArrowLeft, TrendingDown } from 'lucide-react'
-import { MOCK_ORDERS, MOCK_POOLS, formatCAD } from '@/lib/mock-data'
+import { Plus, Package, ArrowLeft, TrendingDown, Loader2 } from 'lucide-react'
 
-function AppNavbar({ locale }: { locale: Locale }) {
+function formatCAD(n: number) {
+  return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n)
+}
+
+function Skeleton({ className }: { className?: string }) {
+  return <div className={`animate-pulse bg-slate-200 rounded-lg ${className}`} />
+}
+
+function AppNavbar({ locale, userName }: { locale: Locale; userName?: string }) {
   const t = getTranslation(locale)
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200/60">
@@ -24,7 +33,9 @@ function AppNavbar({ locale }: { locale: Locale }) {
             <Link href={`/${locale}/pools/create`} className="btn-primary text-sm py-2 px-4">
               <Plus size={15} /> {t.nav.createPool}
             </Link>
-            <div className="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm">MT</div>
+            <div className="w-9 h-9 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm">
+              {userName?.slice(0, 2).toUpperCase() ?? 'U'}
+            </div>
           </div>
         </div>
       </div>
@@ -35,6 +46,9 @@ function AppNavbar({ locale }: { locale: Locale }) {
 function StatusBadge({ status, locale }: { status: string; locale: Locale }) {
   const t = getTranslation(locale)
   const statusMap: Record<string, { cls: string; label: string }> = {
+    IN_TRANSIT: { cls: 'badge-orange', label: t.dashboard.status.in_transit },
+    DELIVERED: { cls: 'badge-green', label: t.dashboard.status.delivered },
+    PENDING: { cls: 'badge-gray', label: t.dashboard.status.pending },
     in_transit: { cls: 'badge-orange', label: t.dashboard.status.in_transit },
     delivered: { cls: 'badge-green', label: t.dashboard.status.delivered },
     pending: { cls: 'badge-gray', label: t.dashboard.status.pending },
@@ -43,21 +57,36 @@ function StatusBadge({ status, locale }: { status: string; locale: Locale }) {
   return <span className={s.cls}>{s.label}</span>
 }
 
-const enrichedOrders = MOCK_ORDERS.map((o) => {
-  const pool = MOCK_POOLS.find((p) => p.id === o.poolId) ?? MOCK_POOLS[0]
-  const soloTotal = pool.soloPrice * o.quantity
-  const saved = soloTotal - o.total
-  return { ...o, pool, saved }
-})
-
 export default function OrdersPage({ params }: { params: { locale: Locale } }) {
   const { locale } = params
   const t = getTranslation(locale)
   const to = t.orders
+  const { data: session } = useSession()
+  const user = session?.user as any
+
+  const [orders, setOrders] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/orders')
+      .then(r => r.json())
+      .then(d => { setOrders(d.orders ?? []); setLoading(false) })
+      .catch(() => setLoading(false))
+  }, [])
+
+  const enrichedOrders = orders.map(order => {
+    const soloPrice = order.pool?.sku?.soloPrice ?? 0
+    const saved = (soloPrice - order.unitPrice) * order.qty
+    return { ...order, saved }
+  })
+
+  const totalSavings = enrichedOrders.reduce((acc, o) => acc + Math.max(0, o.saved), 0)
+  const deliveredCount = orders.filter(o => o.shipmentStatus === 'DELIVERED' || o.shipmentStatus === 'delivered').length
+  const inTransitCount = orders.filter(o => o.shipmentStatus === 'IN_TRANSIT' || o.shipmentStatus === 'in_transit').length
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <AppNavbar locale={locale} />
+      <AppNavbar locale={locale} userName={user?.name} />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
         <div className="mb-8">
@@ -67,11 +96,16 @@ export default function OrdersPage({ params }: { params: { locale: Locale } }) {
 
         {/* Summary cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: to.totalOrders, value: MOCK_ORDERS.length.toString() },
-            { label: to.deliveredCount, value: MOCK_ORDERS.filter(o => o.shipmentStatus === 'delivered').length.toString() },
-            { label: to.inTransitCount, value: MOCK_ORDERS.filter(o => o.shipmentStatus === 'in_transit').length.toString() },
-            { label: to.totalSavings, value: formatCAD(enrichedOrders.reduce((acc, o) => acc + o.saved, 0)) },
+          {loading ? Array(4).fill(0).map((_, i) => (
+            <div key={i} className="card p-4 text-center">
+              <Skeleton className="h-8 w-16 mx-auto mb-1" />
+              <Skeleton className="h-3 w-20 mx-auto" />
+            </div>
+          )) : [
+            { label: to.totalOrders, value: orders.length.toString() },
+            { label: to.deliveredCount, value: deliveredCount.toString() },
+            { label: to.inTransitCount, value: inTransitCount.toString() },
+            { label: to.totalSavings, value: formatCAD(totalSavings) },
           ].map((stat) => (
             <div key={stat.label} className="card p-4 text-center">
               <div className="text-2xl font-black text-slate-900">{stat.value}</div>
@@ -80,21 +114,31 @@ export default function OrdersPage({ params }: { params: { locale: Locale } }) {
           ))}
         </div>
 
-        {enrichedOrders.length > 0 ? (
+        {loading ? (
+          <div className="space-y-4">
+            {Array(3).fill(0).map((_, i) => (
+              <div key={i} className="card p-5">
+                <Skeleton className="h-16 w-full" />
+              </div>
+            ))}
+          </div>
+        ) : enrichedOrders.length > 0 ? (
           <div className="space-y-4">
             {enrichedOrders.map((order) => (
               <div key={order.id} className="card p-5">
                 <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-2xl flex-shrink-0">
-                    {order.pool.imageEmoji}
+                  <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
+                    <Package size={22} className="text-slate-400" />
                   </div>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
                       <div>
-                        <p className="font-bold text-slate-900 text-sm">{order.skuName}</p>
+                        <p className="font-bold text-slate-900 text-sm">
+                          {locale === 'fr' ? order.pool?.sku?.nameFr : order.pool?.sku?.nameEn}
+                        </p>
                         <p className="text-xs text-slate-500 mt-0.5">
-                          <span className="font-mono font-semibold">{order.id}</span>
+                          <span className="font-mono font-semibold">{order.id.slice(0, 12)}…</span>
                           {' · '}{new Date(order.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-CA' : 'en-CA', { year: 'numeric', month: 'short', day: 'numeric' })}
                         </p>
                       </div>
@@ -104,7 +148,7 @@ export default function OrdersPage({ params }: { params: { locale: Locale } }) {
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 text-xs">
                       <div>
                         <p className="text-slate-400">{to.qty}</p>
-                        <p className="font-semibold text-slate-800 mt-0.5">{order.quantity} {to.units}</p>
+                        <p className="font-semibold text-slate-800 mt-0.5">{order.qty} {to.units}</p>
                       </div>
                       <div>
                         <p className="text-slate-400">{to.total}</p>
@@ -114,7 +158,7 @@ export default function OrdersPage({ params }: { params: { locale: Locale } }) {
                         <p className="text-slate-400">{to.savings}</p>
                         <p className="font-bold text-success-600 mt-0.5 flex items-center gap-0.5">
                           <TrendingDown size={11} />
-                          {formatCAD(order.saved)}
+                          {formatCAD(Math.max(0, order.saved))}
                         </p>
                       </div>
                       <div>
