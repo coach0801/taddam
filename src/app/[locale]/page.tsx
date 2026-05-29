@@ -367,6 +367,33 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
       </section>
 
       {/* ═══════════════════════════════════════════
+          CORE VALUE PROPOSITION (from description.txt)
+      ═══════════════════════════════════════════ */}
+      <section className="bg-white border-b border-slate-100 py-10 sm:py-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-10">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">
+              {(t as any).valueProps?.sectionBadge ?? 'Core value proposition'}
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            {[
+              { icon: (t as any).valueProps?.v1Icon ?? '💰', title: (t as any).valueProps?.v1Title, desc: (t as any).valueProps?.v1Desc, border: 'border-t-4 border-brand-500' },
+              { icon: (t as any).valueProps?.v2Icon ?? '🏆', title: (t as any).valueProps?.v2Title, desc: (t as any).valueProps?.v2Desc, border: 'border-t-4 border-maple-500' },
+              { icon: (t as any).valueProps?.v3Icon ?? '🤝', title: (t as any).valueProps?.v3Title, desc: (t as any).valueProps?.v3Desc, border: 'border-t-4 border-accent-500' },
+              { icon: (t as any).valueProps?.v4Icon ?? '💪', title: (t as any).valueProps?.v4Title, desc: (t as any).valueProps?.v4Desc, border: 'border-t-4 border-success-500' },
+            ].map((vp) => (
+              <div key={vp.title} className={`bg-white rounded-2xl p-6 shadow-sm ${vp.border} hover:shadow-md transition-shadow`}>
+                <div className="text-3xl mb-4">{vp.icon}</div>
+                <h3 className="font-bold text-slate-900 mb-2">{vp.title}</h3>
+                <p className="text-slate-600 text-sm leading-relaxed">{vp.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
           HOW IT WORKS
       ═══════════════════════════════════════════ */}
       <section id="how-it-works" className="py-16 sm:py-24 bg-white">
@@ -569,6 +596,56 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          WHY IT WORKS — PROVEN MODEL (from description.txt)
+      ═══════════════════════════════════════════ */}
+      <section className="py-16 sm:py-20 bg-slate-900 relative overflow-hidden">
+        {/* Background accent */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-brand-500/5 blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-maple-500/5 blur-3xl" />
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-10 sm:mb-12">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white/80 text-sm font-semibold mb-4">
+              {(t as any).whyItWorks?.badge ?? 'Why group purchasing works'}
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-black text-white mb-4 leading-tight">
+              {(t as any).whyItWorks?.title ?? 'A proven B2B model — now available to every SME'}
+            </h2>
+            <p className="text-lg text-white/60 max-w-3xl mx-auto leading-relaxed">
+              {(t as any).whyItWorks?.sub}
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            {/* Proof story */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8">
+              <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">
+                {(t as any).whyItWorks?.proofLabel ?? 'The math is simple'}
+              </p>
+              <p className="text-white/80 text-base leading-relaxed">
+                {(t as any).whyItWorks?.proofText}
+              </p>
+            </div>
+
+            {/* 3 proof stats */}
+            <div className="grid grid-cols-3 gap-4">
+              {[
+                { value: (t as any).whyItWorks?.stat1Value ?? '10–30%', label: (t as any).whyItWorks?.stat1Label },
+                { value: (t as any).whyItWorks?.stat2Value ?? '23%',    label: (t as any).whyItWorks?.stat2Label },
+                { value: (t as any).whyItWorks?.stat3Value ?? '$0',     label: (t as any).whyItWorks?.stat3Label },
+              ].map((s) => (
+                <div key={s.label} className="text-center bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6">
+                  <div className="text-2xl sm:text-3xl font-black text-white mb-2">{s.value}</div>
+                  <div className="text-xs text-white/50 leading-snug">{s.label}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

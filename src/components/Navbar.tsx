@@ -66,7 +66,7 @@ export default function Navbar({ locale, transparent = false }: NavbarProps) {
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/10 ${textColor}`}>
                 {t.nav.pools}
               </Link>
-              <Link href={`/${locale}/supplier`}
+              <Link href={`/${locale}#features`}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/10 ${textColor}`}>
                 {t.nav.suppliers}
               </Link>
@@ -117,7 +117,7 @@ export default function Navbar({ locale, transparent = false }: NavbarProps) {
             {[
               { href: `/${locale}#how-it-works`, label: t.nav.howItWorks },
               { href: `/${locale}/pools`,         label: t.nav.pools },
-              { href: `/${locale}/supplier`,       label: t.nav.suppliers },
+              { href: `/${locale}#features`,        label: t.nav.suppliers },
               { href: `/${locale}#pricing`,        label: t.nav.pricing },
             ].map((item) => (
               <Link
