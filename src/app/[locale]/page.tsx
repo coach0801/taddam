@@ -5,10 +5,10 @@ import { type Locale, getTranslation } from '@/lib/i18n'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import {
-  ArrowRight, Play, CheckCircle, TrendingDown, Users, Shield, Truck,
-  Globe, FileText, BarChart3, Zap, ChevronRight, Star, Quote,
-  Package, Building2, UtensilsCrossed, ShoppingBag, ChevronDown,
-  Check
+  ArrowRight, Play, TrendingDown, Users, Shield, Truck,
+  Globe, FileText, BarChart3, Zap, Star, Quote,
+  Package, Building2, ChevronDown, Check, Sparkles, Award,
+  Store
 } from 'lucide-react'
 import { formatCAD, getSavingsPct } from '@/lib/mock-data'
 
@@ -379,44 +379,58 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
             <p className="section-sub max-w-2xl mx-auto">{t.howItWorks.sub}</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connector line */}
-            <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6 relative">
+            {/* Connector line desktop */}
+            <div className="hidden lg:block absolute top-[4.5rem] left-[12.5%] right-[12.5%] h-0.5 bg-gradient-to-r from-transparent via-slate-200 to-transparent pointer-events-none" />
 
             {[
               {
                 step: '01',
                 icon: Package,
                 color: 'from-brand-500 to-brand-700',
-                bgColor: 'bg-brand-50',
                 title: t.howItWorks.step1Title,
                 desc: t.howItWorks.step1Desc,
+                accent: 'border-brand-100',
               },
               {
                 step: '02',
-                icon: Users,
-                color: 'from-accent-500 to-accent-600',
-                bgColor: 'bg-accent-50',
+                icon: Award,
+                color: 'from-maple-500 to-maple-700',
                 title: t.howItWorks.step2Title,
                 desc: t.howItWorks.step2Desc,
+                accent: 'border-maple-100',
+                highlight: true,
               },
               {
                 step: '03',
-                icon: TrendingDown,
-                color: 'from-success-500 to-success-700',
-                bgColor: 'bg-success-50',
+                icon: Users,
+                color: 'from-accent-500 to-accent-600',
                 title: t.howItWorks.step3Title,
                 desc: t.howItWorks.step3Desc,
+                accent: 'border-accent-100',
+              },
+              {
+                step: '04',
+                icon: TrendingDown,
+                color: 'from-success-500 to-success-700',
+                title: t.howItWorks.step4Title,
+                desc: t.howItWorks.step4Desc,
+                accent: 'border-success-100',
               },
             ].map((item) => (
               <div key={item.step} className="relative group">
-                <div className="card p-8 h-full hover:border-brand-200 transition-colors">
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    <item.icon className="text-white" size={28} />
+                <div className={`card p-6 lg:p-8 h-full hover:${item.accent} transition-colors`}>
+                  <div className={`w-14 h-14 lg:w-16 lg:h-16 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <item.icon className="text-white" size={24} />
                   </div>
-                  <div className="text-6xl font-black text-slate-100 absolute top-6 right-6">{item.step}</div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-3 relative">{item.title}</h3>
-                  <p className="text-slate-600 leading-relaxed relative">{item.desc}</p>
+                  <div className="text-5xl lg:text-6xl font-black text-slate-100 absolute top-5 right-5">{item.step}</div>
+                  {item.highlight && (
+                    <span className="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full bg-maple-100 text-maple-700 mb-2">
+                      {locale === 'en' ? 'Key differentiator' : 'Avantage clé'}
+                    </span>
+                  )}
+                  <h3 className="text-lg lg:text-xl font-bold text-slate-900 mb-2 lg:mb-3 relative">{item.title}</h3>
+                  <p className="text-slate-600 leading-relaxed relative text-sm lg:text-base">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -444,20 +458,25 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: Users, title: t.features.f1Title, desc: t.features.f1Desc, color: 'text-brand-600', bg: 'bg-brand-50' },
-              { icon: Building2, title: t.features.f2Title, desc: t.features.f2Desc, color: 'text-accent-600', bg: 'bg-accent-50' },
+              { icon: Users,      title: t.features.f1Title, desc: t.features.f1Desc, color: 'text-brand-600',   bg: 'bg-brand-50' },
+              { icon: Building2,  title: t.features.f2Title, desc: t.features.f2Desc, color: 'text-accent-600',  bg: 'bg-accent-50' },
               { icon: TrendingDown, title: t.features.f3Title, desc: t.features.f3Desc, color: 'text-success-600', bg: 'bg-success-50' },
-              { icon: Shield, title: t.features.f4Title, desc: t.features.f4Desc, color: 'text-violet-600', bg: 'bg-violet-50' },
-              { icon: Truck, title: t.features.f5Title, desc: t.features.f5Desc, color: 'text-sky-600', bg: 'bg-sky-50' },
-              { icon: Globe, title: t.features.f6Title, desc: t.features.f6Desc, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-              { icon: FileText, title: t.features.f7Title, desc: t.features.f7Desc, color: 'text-amber-600', bg: 'bg-amber-50' },
-              { icon: BarChart3, title: t.features.f8Title, desc: t.features.f8Desc, color: 'text-rose-600', bg: 'bg-rose-50' },
+              { icon: Shield,     title: t.features.f4Title, desc: t.features.f4Desc, color: 'text-violet-600',  bg: 'bg-violet-50' },
+              { icon: Truck,      title: t.features.f5Title, desc: t.features.f5Desc, color: 'text-sky-600',     bg: 'bg-sky-50' },
+              { icon: Globe,      title: t.features.f6Title, desc: t.features.f6Desc, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+              { icon: FileText,   title: t.features.f7Title, desc: t.features.f7Desc, color: 'text-amber-600',   bg: 'bg-amber-50' },
+              { icon: Sparkles,   title: t.features.f8Title, desc: t.features.f8Desc, color: 'text-purple-600',  bg: 'bg-purple-50', badge: (t.features as any).f8Badge },
             ].map((feature) => (
-              <div key={feature.title} className="card p-6 hover:border-brand-200 hover:-translate-y-1 transition-all duration-300 group">
+              <div key={feature.title} className="card p-6 hover:border-brand-200 hover:-translate-y-1 transition-all duration-300 group relative">
                 <div className={`w-11 h-11 rounded-xl ${feature.bg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                   <feature.icon className={feature.color} size={22} />
                 </div>
-                <h3 className="font-bold text-slate-900 mb-2 text-sm">{feature.title}</h3>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <h3 className="font-bold text-slate-900 text-sm">{feature.title}</h3>
+                  {feature.badge && (
+                    <span className="flex-shrink-0 text-xs font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-700">{feature.badge}</span>
+                  )}
+                </div>
                 <p className="text-slate-600 text-sm leading-relaxed">{feature.desc}</p>
               </div>
             ))}
@@ -475,33 +494,27 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
             <p className="section-sub max-w-2xl mx-auto">{t.categories.sub}</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 mb-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5 mb-10">
             {[
-              { emoji: '🚗', name: t.categories.auto, desc: t.categories.autoDesc, color: 'from-blue-500 to-blue-700', savings: '28%', poolsActive: 12 },
+              { emoji: '🚗', name: t.categories.auto,         desc: t.categories.autoDesc,         color: 'from-blue-500 to-blue-700',   savings: '28%', poolsActive: 12 },
               { emoji: '🏗️', name: t.categories.construction, desc: t.categories.constructionDesc, color: 'from-amber-500 to-amber-700', savings: '31%', poolsActive: 9 },
-              { emoji: '🍽️', name: t.categories.restaurant, desc: t.categories.restaurantDesc, color: 'from-rose-500 to-rose-700', savings: '24%', poolsActive: 7 },
-              {
-                emoji: '🌾',
-                name: locale === 'en' ? 'Agriculture & Farm' : 'Agriculture',
-                desc: locale === 'en' ? 'Seed, feed, fertilizer, equipment parts' : 'Semences, aliments, engrais, pièces',
-                color: 'from-green-600 to-green-800',
-                savings: '26%',
-                poolsActive: 6,
-              },
+              { emoji: '🏪', name: t.categories.retail,       desc: t.categories.retailDesc,       color: 'from-violet-500 to-violet-700', savings: '22%', poolsActive: 8 },
+              { emoji: '🍽️', name: t.categories.restaurant,   desc: t.categories.restaurantDesc,   color: 'from-rose-500 to-rose-700',   savings: '24%', poolsActive: 7 },
+              { emoji: '🌾', name: (t.categories as any).agriculture, desc: (t.categories as any).agricultureDesc, color: 'from-green-600 to-green-800', savings: '26%', poolsActive: 6 },
             ].map((cat) => (
               <Link
                 key={cat.name}
                 href={`/${locale}/pools`}
-                className="card p-6 group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                className="card p-4 sm:p-5 group hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
               >
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${cat.color} flex items-center justify-center text-3xl mb-5 group-hover:scale-110 transition-transform duration-300 shadow-md`}>
+                <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${cat.color} flex items-center justify-center text-2xl sm:text-3xl mb-4 group-hover:scale-110 transition-transform duration-300 shadow-md`}>
                   {cat.emoji}
                 </div>
-                <h3 className="font-bold text-slate-900 mb-1">{cat.name}</h3>
-                <p className="text-sm text-slate-500 mb-4">{cat.desc}</p>
-                <div className="flex items-center justify-between">
-                  <span className="badge-green">avg {cat.savings} saved</span>
-                  <span className="text-xs text-slate-500">{cat.poolsActive} active pools</span>
+                <h3 className="font-bold text-slate-900 mb-1 text-sm sm:text-base">{cat.name}</h3>
+                <p className="text-xs sm:text-sm text-slate-500 mb-3 leading-snug">{cat.desc}</p>
+                <div className="flex items-center justify-between flex-wrap gap-1">
+                  <span className="badge-green text-xs">avg {cat.savings} {locale === 'en' ? 'saved' : 'économisé'}</span>
+                  <span className="text-xs text-slate-500">{cat.poolsActive} {locale === 'en' ? 'pools' : 'groupes'}</span>
                 </div>
               </Link>
             ))}
