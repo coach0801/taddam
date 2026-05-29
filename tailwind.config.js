@@ -33,6 +33,19 @@ module.exports = {
           800: '#9a3412',
           900: '#7c2d12',
         },
+        maple: {
+          50:  '#fff1f1',
+          100: '#ffdfdf',
+          200: '#ffc5c5',
+          300: '#ff9b9b',
+          400: '#ff6060',
+          500: '#ff2e2e',
+          600: '#C8102E',  // Official Canadian flag red
+          700: '#a80d26',
+          800: '#8b0d23',
+          900: '#6b0b1b',
+          950: '#3d0610',
+        },
         success: {
           50:  '#ecfdf5',
           100: '#d1fae5',
@@ -52,6 +65,7 @@ module.exports = {
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
         'slide-up': 'slideUp 0.5s ease-out',
+        'slide-down': 'slideDown 0.3s ease-out',
         'price-drop': 'priceDrop 0.4s ease-out',
         'pulse-green': 'pulseGreen 1s ease-in-out',
       },
@@ -62,6 +76,10 @@ module.exports = {
         },
         slideUp: {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideDown: {
+          '0%': { opacity: '0', transform: 'translateY(-8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         priceDrop: {

@@ -31,7 +31,7 @@ function getDemoTierIndex(qty: number) {
 function LivePoolWidget({ locale }: { locale: Locale }) {
   const t = getTranslation(locale)
   const pool = {
-    sku: '205/55R16 All-Season Tire — Brand X',
+    sku: locale === 'fr' ? 'Pneu toutes saisons 205/55R16 — Marque X' : '205/55R16 All-Season Tire — Brand X',
     committed: 287,
     target: 500,
     minimum: 100,
@@ -74,13 +74,13 @@ function LivePoolWidget({ locale }: { locale: Locale }) {
 
       <div className="flex items-end justify-between">
         <div>
-          <p className="text-xs text-white/60">Current price</p>
+          <p className="text-xs text-white/60">{locale === 'fr' ? 'Prix actuel' : 'Current price'}</p>
           <p className="text-3xl font-black text-white price-display">{formatCAD(currentTier.unitPrice)}</p>
-          <p className="text-xs text-success-400 font-medium">↓ {savings}% vs. solo purchase</p>
+          <p className="text-xs text-success-400 font-medium">↓ {savings}% {locale === 'fr' ? 'vs. achat individuel' : 'vs. solo purchase'}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-white/60">{pool.participants} buyers</p>
-          <p className="text-xs text-white/60">Closes in {pool.closingIn}</p>
+          <p className="text-xs text-white/60">{pool.participants} {locale === 'fr' ? 'acheteurs' : 'buyers'}</p>
+          <p className="text-xs text-white/60">{locale === 'fr' ? 'Ferme dans' : 'Closes in'} {pool.closingIn}</p>
         </div>
       </div>
     </div>
@@ -105,12 +105,12 @@ function DynamicPricingDemo({ locale }: { locale: Locale }) {
   }
 
   return (
-    <section id="demo" className="py-24 bg-gradient-to-b from-white to-slate-50">
+    <section id="demo" className="py-16 sm:py-24 bg-gradient-to-b from-white to-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 sm:mb-16">
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-100 text-brand-700 text-sm font-semibold mb-4">
             <Zap size={15} />
-            Interactive demo
+            {locale === 'en' ? 'Interactive demo' : 'Démo interactive'}
           </span>
           <h2 className="section-title mb-4">{t.pricingDemo.title}</h2>
           <p className="section-sub max-w-2xl mx-auto">{t.pricingDemo.sub}</p>
@@ -262,16 +262,17 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 w-full">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-16 w-full">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left: copy */}
             <div className="animate-fade-in">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white/90 text-sm font-medium mb-8 backdrop-blur-sm">
-                <span className="w-2 h-2 rounded-full bg-success-400 animate-pulse inline-block" />
+              {/* Live badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white/90 text-sm font-medium mb-6 backdrop-blur-sm">
+                <span className="w-2 h-2 rounded-full bg-success-400 animate-pulse inline-block flex-shrink-0" />
                 {t.hero.badge}
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight mb-6">
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight mb-5">
                 {t.hero.headline1}
                 <br />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-accent-400 to-accent-300">
@@ -279,28 +280,42 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
                 </span>
               </h1>
 
-              <p className="text-lg sm:text-xl text-white/75 leading-relaxed mb-10 max-w-xl">
+              <p className="text-base sm:text-xl text-white/75 leading-relaxed mb-7 max-w-xl">
                 {t.hero.sub}
               </p>
 
-              <div className="flex flex-wrap gap-4 mb-12">
+              {/* Province coverage strip */}
+              <div className="flex flex-wrap items-center gap-1.5 mb-8">
+                <span className="text-xs text-white/50 mr-1">
+                  {locale === 'en' ? 'Active in:' : 'Actif en :'}
+                </span>
+                {['ON', 'QC', 'BC', 'AB', 'MB', 'SK', 'NS', 'NB'].map((p) => (
+                  <span key={p} className="text-xs font-semibold px-2 py-0.5 rounded bg-white/10 border border-white/20 text-white/60">
+                    {p}
+                  </span>
+                ))}
+                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-white/10 border border-white/20 text-white/60">+</span>
+              </div>
+
+              {/* CTA buttons — stack on mobile, row on sm+ */}
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10">
                 <Link
                   href={`/${locale}/auth/register`}
-                  className="btn-accent text-base px-8 py-4 shadow-lg hover:shadow-xl"
+                  className="btn-maple text-base px-8 py-4 shadow-lg hover:shadow-xl justify-center"
                 >
                   {t.hero.ctaBuyer}
                   <ArrowRight size={18} />
                 </Link>
                 <Link
                   href={`/${locale}/auth/register`}
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-semibold text-white border-2 border-white/30 hover:border-white/60 hover:bg-white/10 transition-all duration-200"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold text-white border-2 border-white/30 hover:border-white/60 hover:bg-white/10 transition-all duration-200"
                 >
                   {t.hero.ctaSupplier}
                 </Link>
               </div>
 
               <button className="inline-flex items-center gap-3 text-white/70 hover:text-white transition-colors group">
-                <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+                <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-white/20 transition-colors flex-shrink-0">
                   <Play size={14} fill="currentColor" />
                 </div>
                 <span className="text-sm font-medium">{t.hero.watchDemo}</span>
@@ -308,26 +323,28 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
             </div>
 
             {/* Right: live pool widget */}
-            <div className="flex justify-center lg:justify-end animate-slide-up">
+            <div className="flex justify-center lg:justify-end animate-slide-up mt-4 lg:mt-0">
               <div className="relative">
-                <div className="absolute -top-6 -left-6 w-full h-full rounded-2xl bg-white/5 border border-white/10 transform rotate-3" />
+                <div className="absolute -top-6 -left-6 w-full h-full rounded-2xl bg-white/5 border border-white/10 transform rotate-3 hidden sm:block" />
                 <LivePoolWidget locale={locale} />
 
-                {/* Floating badges */}
-                <div className="absolute -top-4 -right-4 bg-success-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-bounce">
-                  Price dropped! ↓ 43%
+                {/* Floating badges — hidden on xs, visible on sm+ */}
+                <div className="hidden sm:flex absolute -top-4 -right-4 bg-success-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-bounce">
+                  {locale === 'fr' ? 'Prix en baisse ! ↓ 43 %' : 'Price dropped! ↓ 43%'}
                 </div>
-                <div className="absolute -bottom-4 -left-6 bg-white rounded-xl px-4 py-2 shadow-xl flex items-center gap-2">
+                <div className="hidden sm:flex absolute -bottom-4 -left-4 bg-white rounded-xl px-4 py-2 shadow-xl items-center gap-2">
                   <Users size={14} className="text-brand-600" />
-                  <span className="text-xs font-semibold text-slate-700">14 buyers joined today</span>
+                  <span className="text-xs font-semibold text-slate-700">
+                    {locale === 'fr' ? '14 acheteurs aujourd\'hui' : '14 buyers joined today'}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Stats bar */}
-          <div className="mt-20 pt-12 border-t border-white/10">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
+          <div className="mt-14 sm:mt-20 pt-10 sm:pt-12 border-t border-white/10">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8">
               {[
                 { value: t.hero.stat1Value, label: t.hero.stat1Label },
                 { value: t.hero.stat2Value, label: t.hero.stat2Label },
@@ -335,8 +352,8 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
                 { value: t.hero.stat4Value, label: t.hero.stat4Label },
               ].map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <div className="text-3xl sm:text-4xl font-black text-white mb-1">{stat.value}</div>
-                  <div className="text-sm text-white/60">{stat.label}</div>
+                  <div className="text-2xl sm:text-4xl font-black text-white mb-1">{stat.value}</div>
+                  <div className="text-xs sm:text-sm text-white/60 leading-tight">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -352,11 +369,11 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
       {/* ═══════════════════════════════════════════
           HOW IT WORKS
       ═══════════════════════════════════════════ */}
-      <section id="how-it-works" className="py-24 bg-white">
+      <section id="how-it-works" className="py-16 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 sm:mb-16">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-50 text-brand-700 text-sm font-semibold mb-4">
-              Simple &amp; transparent
+              {locale === 'en' ? 'Simple & transparent' : 'Simple et transparent'}
             </span>
             <h2 className="section-title mb-4">{t.howItWorks.title}</h2>
             <p className="section-sub max-w-2xl mx-auto">{t.howItWorks.sub}</p>
@@ -415,11 +432,11 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
       {/* ═══════════════════════════════════════════
           FEATURES
       ═══════════════════════════════════════════ */}
-      <section id="features" className="py-24 bg-white">
+      <section id="features" className="py-16 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success-50 text-success-700 text-sm font-semibold mb-4">
-              Built for Canadian SMEs
+          <div className="text-center mb-12 sm:mb-16">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-maple-50 text-maple-700 text-sm font-semibold mb-4">
+              🍁 {locale === 'en' ? 'Built for Canadian SMEs' : 'Conçu pour les PME canadiennes'}
             </span>
             <h2 className="section-title mb-4">{t.features.title}</h2>
             <p className="section-sub max-w-2xl mx-auto">{t.features.sub}</p>
@@ -451,19 +468,26 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
       {/* ═══════════════════════════════════════════
           CATEGORIES
       ═══════════════════════════════════════════ */}
-      <section id="categories" className="py-24 bg-slate-50">
+      <section id="categories" className="py-16 sm:py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 sm:mb-16">
             <h2 className="section-title mb-4">{t.categories.title}</h2>
             <p className="section-sub max-w-2xl mx-auto">{t.categories.sub}</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 mb-10">
             {[
               { emoji: '🚗', name: t.categories.auto, desc: t.categories.autoDesc, color: 'from-blue-500 to-blue-700', savings: '28%', poolsActive: 12 },
               { emoji: '🏗️', name: t.categories.construction, desc: t.categories.constructionDesc, color: 'from-amber-500 to-amber-700', savings: '31%', poolsActive: 9 },
               { emoji: '🍽️', name: t.categories.restaurant, desc: t.categories.restaurantDesc, color: 'from-rose-500 to-rose-700', savings: '24%', poolsActive: 7 },
-              { emoji: '🏪', name: t.categories.retail, desc: t.categories.retailDesc, color: 'from-violet-500 to-violet-700', savings: '22%', poolsActive: 5 },
+              {
+                emoji: '🌾',
+                name: locale === 'en' ? 'Agriculture & Farm' : 'Agriculture',
+                desc: locale === 'en' ? 'Seed, feed, fertilizer, equipment parts' : 'Semences, aliments, engrais, pièces',
+                color: 'from-green-600 to-green-800',
+                savings: '26%',
+                poolsActive: 6,
+              },
             ].map((cat) => (
               <Link
                 key={cat.name}
@@ -495,13 +519,16 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
       {/* ═══════════════════════════════════════════
           TESTIMONIALS
       ═══════════════════════════════════════════ */}
-      <section id="testimonials" className="py-24 bg-white">
+      <section id="testimonials" className="py-16 sm:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="section-title mb-4">{t.testimonials.title}</h2>
+          <div className="text-center mb-12 sm:mb-16">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-maple-50 text-maple-700 text-sm font-semibold mb-4">
+              🇨🇦 {t.testimonials.title}
+            </span>
+            <h2 className="section-title">{locale === 'en' ? 'Real savings. Real businesses.' : 'De vraies économies. De vraies entreprises.'}</h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-5 sm:gap-8">
             {[
               { quote: t.testimonials.t1Quote, name: t.testimonials.t1Name, role: t.testimonials.t1Role, emoji: '🚗', savings: '28%' },
               { quote: t.testimonials.t2Quote, name: t.testimonials.t2Name, role: t.testimonials.t2Role, emoji: '🏗️', savings: '31%' },
@@ -534,11 +561,33 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
       </section>
 
       {/* ═══════════════════════════════════════════
+          CANADIAN TRUST BAND
+      ═══════════════════════════════════════════ */}
+      <section className="bg-maple-600 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-10 text-white/90 text-sm text-center">
+            {[
+              { icon: '🍁', text: locale === 'en' ? 'Made in Canada' : 'Fait au Canada' },
+              { icon: '🔒', text: locale === 'en' ? 'PIPEDA compliant' : 'Conforme LPRPDE' },
+              { icon: '🏛️', text: locale === 'en' ? 'CRA Business Numbers' : 'Numéros d\'entreprise ARC' },
+              { icon: '💬', text: locale === 'en' ? 'Bilingual EN / FR' : 'Bilingue EN / FR' },
+              { icon: '🇨🇦', text: locale === 'en' ? 'Canadian data residency' : 'Données hébergées au Canada' },
+            ].map((item) => (
+              <div key={item.text} className="flex items-center gap-2 font-medium">
+                <span>{item.icon}</span>
+                <span>{item.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
           PRICING
       ═══════════════════════════════════════════ */}
-      <section id="pricing" className="py-24 bg-gradient-to-b from-slate-50 to-white">
+      <section id="pricing" className="py-16 sm:py-24 bg-gradient-to-b from-slate-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 sm:mb-16">
             <h2 className="section-title mb-4">{t.pricingSection.title}</h2>
             <p className="section-sub max-w-2xl mx-auto">{t.pricingSection.sub}</p>
           </div>
@@ -634,14 +683,14 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
           <p className="text-xl text-white/70 mb-10 leading-relaxed">
             {t.cta.sub}
           </p>
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
-            <Link href={`/${locale}/auth/register`} className="btn-accent text-base px-10 py-4 shadow-xl">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-8">
+            <Link href={`/${locale}/auth/register`} className="btn-maple text-base px-10 py-4 shadow-xl justify-center">
               {t.cta.ctaBuyer}
               <ArrowRight size={18} />
             </Link>
             <Link
               href={`/${locale}/auth/register`}
-              className="inline-flex items-center gap-2 px-10 py-4 rounded-xl text-base font-semibold text-white border-2 border-white/30 hover:border-white/60 hover:bg-white/10 transition-all"
+              className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl text-base font-semibold text-white border-2 border-white/30 hover:border-white/60 hover:bg-white/10 transition-all"
             >
               {t.cta.ctaSupplier}
             </Link>
