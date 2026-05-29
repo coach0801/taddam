@@ -1,5 +1,9 @@
-import { auth } from '@/lib/auth'
+import NextAuth from 'next-auth'
+import { authConfig } from '@/lib/auth.config'
 import { NextResponse } from 'next/server'
+
+// Use lightweight auth config (no Prisma/bcryptjs) to keep edge bundle < 1 MB
+const { auth } = NextAuth(authConfig)
 
 const PROTECTED_PATHS = ['/dashboard', '/orders', '/pools/create', '/supplier', '/admin']
 
