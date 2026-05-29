@@ -132,10 +132,10 @@ export default function AdminContent({ locale }: { locale: Locale }) {
         setPendingSuppliers(v => v.filter(x => x.id !== modal.id))
         addToast(`${modal.org} ${locale === 'fr' ? 'approuvé avec succès.' : 'approved successfully.'}`, 'success')
       } else {
-        addToast(locale === 'fr' ? 'Erreur lors de l\'approbation.' : 'Error approving supplier.', 'error' as any)
+        addToast(locale === 'fr' ? 'Erreur lors de l\'approbation.' : 'Error approving supplier.', 'error')
       }
     } catch {
-      addToast(locale === 'fr' ? 'Erreur réseau.' : 'Network error.', 'error' as any)
+      addToast(locale === 'fr' ? 'Erreur réseau.' : 'Network error.', 'error')
     }
     setActionLoading(false)
     closeModal()
@@ -233,7 +233,7 @@ export default function AdminContent({ locale }: { locale: Locale }) {
           {tabs.map((t2) => (
             <button
               key={t2.id}
-              onClick={() => setTab(t2.id as any)}
+              onClick={() => setTab(t2.id)}
               className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold rounded-t-lg transition-all border-b-2 -mb-px whitespace-nowrap ${
                 tab === t2.id
                   ? 'text-brand-700 border-brand-700 bg-brand-50'
@@ -524,13 +524,13 @@ export default function AdminContent({ locale }: { locale: Locale }) {
             <div>
               <label className="label">{ta.interveneAction}</label>
               <div className="space-y-2">
-                {[
-                  { value: 'close', label: ta.interveneClose },
-                  { value: 'extend', label: ta.interveneExtend },
-                ].map(opt => (
+                {([
+                  { value: 'close' as const, label: ta.interveneClose },
+                  { value: 'extend' as const, label: ta.interveneExtend },
+                ]).map(opt => (
                   <button
                     key={opt.value}
-                    onClick={() => setInterveneAction(opt.value as any)}
+                    onClick={() => setInterveneAction(opt.value)}
                     className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 text-left text-sm transition-all ${interveneAction === opt.value ? 'border-brand-500 bg-brand-50 text-brand-700 font-semibold' : 'border-slate-200 text-slate-600'}`}
                   >
                     {opt.label}

@@ -373,15 +373,15 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-10">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold uppercase tracking-wider">
-              {(t as any).valueProps?.sectionBadge ?? 'Core value proposition'}
+              {t.valueProps.sectionBadge}
             </span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {[
-              { icon: (t as any).valueProps?.v1Icon ?? '💰', title: (t as any).valueProps?.v1Title, desc: (t as any).valueProps?.v1Desc, border: 'border-t-4 border-brand-500' },
-              { icon: (t as any).valueProps?.v2Icon ?? '🏆', title: (t as any).valueProps?.v2Title, desc: (t as any).valueProps?.v2Desc, border: 'border-t-4 border-maple-500' },
-              { icon: (t as any).valueProps?.v3Icon ?? '🤝', title: (t as any).valueProps?.v3Title, desc: (t as any).valueProps?.v3Desc, border: 'border-t-4 border-accent-500' },
-              { icon: (t as any).valueProps?.v4Icon ?? '💪', title: (t as any).valueProps?.v4Title, desc: (t as any).valueProps?.v4Desc, border: 'border-t-4 border-success-500' },
+              { icon: t.valueProps.v1Icon, title: t.valueProps.v1Title, desc: t.valueProps.v1Desc, border: 'border-t-4 border-brand-500' },
+              { icon: t.valueProps.v2Icon, title: t.valueProps.v2Title, desc: t.valueProps.v2Desc, border: 'border-t-4 border-maple-500' },
+              { icon: t.valueProps.v3Icon, title: t.valueProps.v3Title, desc: t.valueProps.v3Desc, border: 'border-t-4 border-accent-500' },
+              { icon: t.valueProps.v4Icon, title: t.valueProps.v4Title, desc: t.valueProps.v4Desc, border: 'border-t-4 border-success-500' },
             ].map((vp) => (
               <div key={vp.title} className={`bg-white rounded-2xl p-6 shadow-sm ${vp.border} hover:shadow-md transition-shadow`}>
                 <div className="text-3xl mb-4">{vp.icon}</div>
@@ -492,7 +492,7 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
               { icon: Truck,      title: t.features.f5Title, desc: t.features.f5Desc, color: 'text-sky-600',     bg: 'bg-sky-50' },
               { icon: Globe,      title: t.features.f6Title, desc: t.features.f6Desc, color: 'text-emerald-600', bg: 'bg-emerald-50' },
               { icon: FileText,   title: t.features.f7Title, desc: t.features.f7Desc, color: 'text-amber-600',   bg: 'bg-amber-50' },
-              { icon: Sparkles,   title: t.features.f8Title, desc: t.features.f8Desc, color: 'text-purple-600',  bg: 'bg-purple-50', badge: (t.features as any).f8Badge },
+              { icon: Sparkles,   title: t.features.f8Title, desc: t.features.f8Desc, color: 'text-purple-600',  bg: 'bg-purple-50', badge: t.features.f8Badge },
             ].map((feature) => (
               <div key={feature.title} className="card p-6 hover:border-brand-200 hover:-translate-y-1 transition-all duration-300 group relative">
                 <div className={`w-11 h-11 rounded-xl ${feature.bg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
@@ -527,7 +527,7 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
               { emoji: '🏗️', name: t.categories.construction, desc: t.categories.constructionDesc, color: 'from-amber-500 to-amber-700', savings: '31%', poolsActive: 9 },
               { emoji: '🏪', name: t.categories.retail,       desc: t.categories.retailDesc,       color: 'from-violet-500 to-violet-700', savings: '22%', poolsActive: 8 },
               { emoji: '🍽️', name: t.categories.restaurant,   desc: t.categories.restaurantDesc,   color: 'from-rose-500 to-rose-700',   savings: '24%', poolsActive: 7 },
-              { emoji: '🌾', name: (t.categories as any).agriculture, desc: (t.categories as any).agricultureDesc, color: 'from-green-600 to-green-800', savings: '26%', poolsActive: 6 },
+              { emoji: '🌾', name: t.categories.agriculture, desc: t.categories.agricultureDesc, color: 'from-green-600 to-green-800', savings: '26%', poolsActive: 6 },
             ].map((cat) => (
               <Link
                 key={cat.name}
@@ -612,13 +612,13 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-10 sm:mb-12">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-white/80 text-sm font-semibold mb-4">
-              {(t as any).whyItWorks?.badge ?? 'Why group purchasing works'}
+              {t.whyItWorks.badge}
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-white mb-4 leading-tight">
-              {(t as any).whyItWorks?.title ?? 'A proven B2B model — now available to every SME'}
+              {t.whyItWorks.title}
             </h2>
             <p className="text-lg text-white/60 max-w-3xl mx-auto leading-relaxed">
-              {(t as any).whyItWorks?.sub}
+              {t.whyItWorks.sub}
             </p>
           </div>
 
@@ -626,19 +626,19 @@ export default function LandingPage({ params }: { params: { locale: Locale } }) 
             {/* Proof story */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8">
               <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-3">
-                {(t as any).whyItWorks?.proofLabel ?? 'The math is simple'}
+                {t.whyItWorks.proofLabel}
               </p>
               <p className="text-white/80 text-base leading-relaxed">
-                {(t as any).whyItWorks?.proofText}
+                {t.whyItWorks.proofText}
               </p>
             </div>
 
             {/* 3 proof stats */}
             <div className="grid grid-cols-3 gap-4">
               {[
-                { value: (t as any).whyItWorks?.stat1Value ?? '10–30%', label: (t as any).whyItWorks?.stat1Label },
-                { value: (t as any).whyItWorks?.stat2Value ?? '23%',    label: (t as any).whyItWorks?.stat2Label },
-                { value: (t as any).whyItWorks?.stat3Value ?? '$0',     label: (t as any).whyItWorks?.stat3Label },
+                { value: t.whyItWorks.stat1Value, label: t.whyItWorks.stat1Label },
+                { value: t.whyItWorks.stat2Value, label: t.whyItWorks.stat2Label },
+                { value: t.whyItWorks.stat3Value, label: t.whyItWorks.stat3Label },
               ].map((s) => (
                 <div key={s.label} className="text-center bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6">
                   <div className="text-2xl sm:text-3xl font-black text-white mb-2">{s.value}</div>

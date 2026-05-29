@@ -4,7 +4,7 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 const FROM = 'taddam <onboarding@resend.dev>'
 
 async function send(opts: { to: string; subject: string; text: string; html?: string }) {
-  if (!resend) { console.log('[EMAIL MOCK]', opts.subject, '->', opts.to); return }
+  if (!resend) { return }
   try { await resend.emails.send({ from: FROM, ...opts }) } catch (e) { console.error('[EMAIL]', e) }
 }
 
